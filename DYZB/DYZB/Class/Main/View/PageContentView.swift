@@ -129,6 +129,7 @@ extension  PageContentView : UICollectionViewDelegate{
             var ratio = currentOffsetX / scrollViewW
             progress = ratio - floor(ratio)
             sourceIndex = Int(currentOffsetX / scrollViewW)
+            print("currentOffsetX :\(currentOffsetX) scrollviewW : \(scrollViewW)")
             targetIndex = sourceIndex + 1
             if targetIndex >= childVcs.count{
                 targetIndex = childVcs.count - 1
