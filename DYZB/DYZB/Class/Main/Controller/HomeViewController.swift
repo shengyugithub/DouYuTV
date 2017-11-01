@@ -12,18 +12,39 @@ private let CTitleViewH : CGFloat = 40
 
 class HomeViewController: UIViewController {
     
+    
     // MARK: - 懒加载属性
     private lazy var pageTitleView : PageTitleView = {
         let titleFrame = CGRect.init(x: 0, y: CStatusBarH + CNavigationBarH, width: CScreenW, height: CTitleViewH)
         let titles = ["推荐","手游","娱乐","游戏","趣玩"]
         let titleView = PageTitleView.init(frame: titleFrame, titles: titles)
         //titleView.backgroundColor = UIColor.purple
+        titleView.delegate = self
         return titleView
     }()
-
+    
+    //MARK: - PagecontentView
+    private lazy var pageContentView : PageContentView = { [weak self] in
+       // 1 确定frame
+       let contentH = CScreenH - CStatusBarH - CNavigationBarH - CTabBarH
+       let contentFrame = CGRect.init(x: 0, y: CStatusBarH + CNavigationBarH + CTitleViewH, width: CScreenW, height: contentH)
+        //2 确定子控制器
+       var childs = [UIViewController]()
+        for _ in 0..<5{
+            let vc = UIViewController()
+            vc.view.backgroundColor = UIColor.init(r : CGFloat(arc4random_uniform(255)), g : CGFloat(arc4random_uniform(255)), b : CGFloat(arc4random_uniform(255)))
+            childs.append(vc)
+        }
+        
+        let contentView = PageContentView.init(frame: contentFrame, childVcs: childs, parentViewController: self!)
+        contentView.delegate = self
+        return contentView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+       // pageContentView.delegate = self
         // Do any additional setup after loading the view.
         setupUI()
     }
@@ -43,6 +64,8 @@ extension HomeViewController{
         setupNavigationBar()
         // 2. 添加titleview
         view.addSubview(pageTitleView)
+        // 3 添加contentview
+        view.addSubview(pageContentView)
     }
     
     private func setupNavigationBar(){
@@ -67,4 +90,18 @@ extension HomeViewController{
     }
     
     
+}
+
+//作为PageTitleViewDelegate
+extension HomeViewController : PageTitleViewDelegate{
+    func pageTitleViewClicked(currentIndex: Int) {
+        self.pageContentView.scrollCollectionViewTo(index: currentIndex)
+    }
+}
+
+//作为PageContentViewDelegate
+extension HomeViewController : PageContentViewDelegate{
+    func pageContentView(contentView : PageContentView, progress : CGFloat, sourceIndex : Int, targetIndex : Int){
+        self.pageTitleView.setTitleWithProgress(progress: progress, sourceIndex: sourceIndex, targetIndex: targetIndex)
+    }
 }

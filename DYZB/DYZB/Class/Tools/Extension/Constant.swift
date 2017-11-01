@@ -12,5 +12,6 @@ let CStatusBarH : CGFloat = 20
 let CNavigationBarH : CGFloat = 44
 let CScreenW = UIScreen.main.bounds.width
 let CScreenH = UIScreen.main.bounds.height
+let CTabBarH : CGFloat = 49
 
 
